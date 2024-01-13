@@ -135,32 +135,26 @@ app
     }
 
     // Search for documents in the collection based on the given query
-    let disasterResults = await client
-      .db("Disasters")
-      .collection("DisasterCollection")
-      .find(query)
-      .toArray();
+    try {
+      const disasterResults = await client
+        .db("Disasters")
+        .collection("DisasterCollection")
+        .find(query)
+        .toArray();
 
-    const result = disasterResults.filter((disaster) => {
-      if (
-        disaster.type === type &&
-        disaster.intensity >= minIntensity &&
-        disaster.intensity <= maxIntensity
-      ) {
-        result.push(disaster);
+      console.log("result: " + result);
+
+      if (!disasterResults || disasterResults.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No disasters found with the specified criteria" });
       }
-    });
-
-    disasterResults = result;
-
-    console.log("result: " + result);
-
-    if (!disasterResults || disasterResults.length === 0) {
+      return res.json(disasterResults);
+    } catch (e) {
       return res
-        .status(404)
-        .json({ message: "No disasters found with the specified criteria" });
+        .status(500)
+        .json({ message: "An error occurred", error: error });
     }
-    return res.json(disasterResults);
   });
 
 app.listen(5002, () => console.log("Listening on port 5002"));

@@ -92,7 +92,7 @@ const DisastersList: React.FC = () => {
         setDisasters(responseData);
         setItems(
           responseData.map((disaster) => ({
-            position: [disaster.long, disaster.lat],
+            position: [disaster.lat, disaster.long],
             name: disaster.name,
             date: disaster.date,
             intensity: disaster.intensity,
@@ -154,7 +154,7 @@ const DisastersList: React.FC = () => {
       setDisasters(data);
       setItems(
         data.map((disaster) => ({
-          position: [disaster.long, disaster.lat],
+          position: [disaster.lat, disaster.long],
           name: disaster.name,
           date: disaster.date,
           intensity: disaster.intensity,
@@ -205,10 +205,10 @@ const DisastersList: React.FC = () => {
     getMapData();
   }, []);
 
-  const focusMap = (long: number, lat: number) => {
+  const focusMap = (lat: number, long: number) => {
     const map = mapRef.current;
     if (map) {
-      map.setView([long, lat], 13);
+      map.setView([lat, long], 13);
     }
   };
 
@@ -304,92 +304,6 @@ const DisastersList: React.FC = () => {
               </div>
             </div>
 
-            {/* <div id="coordinates">
-              <div>
-                <label
-                  htmlFor="longitudeMin"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Longitude(min)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="longitudeMin"
-                    name="longitudeMin"
-                    type="text"
-                    value={lonMin}
-                    onChange={(n) => {
-                      setLonMin(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="longitudeMax"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Longitude(max)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="longitudeMax"
-                    name="longitudeMax"
-                    type="text"
-                    value={lonMax}
-                    onChange={(n) => {
-                      setLonMax(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="latitudeMin"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Latitude(min)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="LatitudeMin"
-                    name="LatitudeMin"
-                    type="text"
-                    value={latMin}
-                    onChange={(n) => {
-                      setLatMin(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="latitudeMax"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Latitude(max)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="LatitudeMax"
-                    name="LatitudeMax"
-                    type="text"
-                    value={latMax}
-                    onChange={(n) => {
-                      setLatMax(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-            </div> */}
-
             <div id="date">
               <div>
                 <div className="mb-2 block">
@@ -447,7 +361,7 @@ const DisastersList: React.FC = () => {
                 </h3>
                 <h3 id="intensity">LV. {item.intensity}</h3>
                 <h3>
-                  Location: {item.long}, {item.lat}
+                  Location: {item.lat}, {item.long}
                 </h3>
                 <h3>Date: {item.date}</h3>
                 <h3>
@@ -486,7 +400,7 @@ const DisastersList: React.FC = () => {
                 <Table.Cell>
                   <button
                     onClick={() => {
-                      focusMap(disaster.long, disaster.lat);
+                      focusMap(disaster.lat, disaster.long);
                     }}
                   >
                     Focus
