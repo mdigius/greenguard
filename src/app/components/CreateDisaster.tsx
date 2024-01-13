@@ -21,7 +21,7 @@ const CreateDisaster = () => {
 
       const data = {
         name: name,
-        type: type,
+        type: type.toLowerCase(),
         intensity: intensity,
         long: long,
         lat: lat,
