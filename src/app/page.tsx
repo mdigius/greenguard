@@ -1,16 +1,16 @@
 
 "use client";
+import  DisastersList  from "./components/List";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Map, SearchComponent, SearchPage } from "./components";
+
 
 
 export default function Home() {
   const router = useRouter();
   return (
     <main>
-      <SearchPage></SearchPage>
-
+      <DisastersList></DisastersList>
     </main>
   );
 }

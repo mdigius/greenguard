@@ -86,7 +86,7 @@ app
     res.status(201).json({ message: "Successfully inserted disaster" });
   })
   .get(async (req, res) => {
-    const name = req.params.name;
+    const name = req.query.name;
     const type = req.params.type;
     const date = req.params.date;
     const intensity = req.params.intensity;
@@ -106,9 +106,8 @@ app
       .toArray();
 
     if (!disasterResults || disasterResults.length === 0) {
-      return res.status(404).json({ message: "No disaster found" });
+      console.log("result: " + disasterResults)
     }
-
     return res.json(disasterResults);
   });
 

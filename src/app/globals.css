@@ -85,7 +85,7 @@ hr{
   width: 1312px;
   height: 1px;
 }
-#searchBlock, #coordinates, #typeIntensity, #date, #searchBtn{
+#searchBlock, #coordinates, #typeIntensity, #date, #searchBtn, #filterBtn{
   display: flex;
   flex-direction: row;
   align-items: center;   

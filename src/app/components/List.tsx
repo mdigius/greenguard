@@ -105,12 +105,44 @@ const DisastersList: React.FC = () => {
     }
   };
 
+
+  const searchData =async () => {
+    try {
+      const response = await fetch(`http://localhost:5002/api/disasters?name=${name}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setDisasters(data);
+      setItems(
+        data.map((disaster) => ({
+          position: [disaster.lat, disaster.long],
+          name: disaster.name,
+          date: disaster.date,
+          intensity: disaster.intensity,
+          type: disaster.type,
+          long: disaster.long,
+          lat: disaster.lat,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
   useEffect(() => {
     getMapData();
   }, []);
 
   return (
     <>
+      <br /><br /><br /><br />
       <div>
         <form onSubmit={handleSubmit}>
           <div id="searchBlock">
@@ -132,8 +164,7 @@ const DisastersList: React.FC = () => {
                 className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
-            <Button gradientMonochrome="success" type="submit">
-              {" "}
+            <Button gradientMonochrome="success" type="submit" onClick={searchData}>
               Search
             </Button>
           </div>
@@ -315,7 +346,7 @@ const DisastersList: React.FC = () => {
               </div>
             </div>
 
-            <div id="searchBtn">
+            <div id="filterBtn">
               <Button gradientMonochrome="success" type="submit">
                 Apply filter
               </Button>
