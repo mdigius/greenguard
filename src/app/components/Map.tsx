@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // Set the path for the Leaflet marker images
-const iconRetinaUrl = '/marker-icon-2x.png';
-const iconUrl = '/marker-icon.png';
-const shadowUrl = '/marker-shadow.png';
+const iconRetinaUrl = "/marker-icon-2x.png";
+const iconUrl = "/marker-icon.png";
+const shadowUrl = "/marker-shadow.png";
 
 // Create a new Leaflet icon
 const defaultIcon = new L.Icon({
@@ -18,10 +18,8 @@ const defaultIcon = new L.Icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
-
-
 
 // Define a type for the item structure
 type MapItem = {
@@ -31,13 +29,45 @@ type MapItem = {
 };
 
 const MyMapComponent: React.FC = () => {
+  const [disasters, setDisasters] = useState([]);
+
+  const url = `http://localhost:5002/api/disasters`;
+
+  const getMapData = async () => {
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setDisasters(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getMapData();
+  }, []);
+
   const [items, setItems] = useState<MapItem[]>([
-    { id: 1, position: [51.505, -0.09], label: 'Marker 1' },
+    { id: 1, position: [51.505, -0.09], label: "Marker 1" },
     // ... more items
   ]);
 
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '400px', width: '100%' }}>
+    <MapContainer
+      center={[20.9791382, 44.2327226]}
+      zoom={1}
+      style={{ height: "400px", width: "100%" }}
+    >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
