@@ -31,6 +31,7 @@ type MapItem = {
 
 const MyMapComponent: React.FC = () => {
   const [disasters, setDisasters] = useState([]);
+  const [items, setItems] = useState<any[]>([]);
 
   const url = `http://localhost:5002/api/disasters`;
 
@@ -49,26 +50,32 @@ const MyMapComponent: React.FC = () => {
 
       const data = await response.json();
       setDisasters(data);
+      setItems(
+        data.map((disaster) => ({
+          position: [disaster.lat, disaster.long],
+          name: disaster.name,
+          date: disaster.date,
+          intensity: disaster.intensity,
+          type: disaster.type,
+          long: disaster.long,
+          lat: disaster.lat,
+        }))
+      );
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(disasters);
-
   useEffect(() => {
     getMapData();
   }, []);
 
-  const [items, setItems] = useState<MapItem[]>([
-    { id: 1, position: [51.505, -0.09], label: "Marker 1" },
-    // ... more items
-  ]);
+  console.log(items);
 
   return (
     <>
       <MapContainer
-        center={[20.9791382, 44.2327226]}
+        center={[56.1304, 106.3468]}
         zoom={1}
         style={{ height: "400px", width: "100%" }}
       >
@@ -76,9 +83,23 @@ const MyMapComponent: React.FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {items.map((item: MapItem) => (
-          <Marker key={item.id} position={item.position} icon={defaultIcon}>
-            <Popup>{item.label}</Popup>
+        {items.map((item) => (
+          <Marker position={item.position} icon={defaultIcon}>
+            <Popup>
+              <h3 id="name">
+                {item.type} - {item.name}
+              </h3>
+              <h3 id="intensity">LV. {item.intensity}</h3>
+              <h3>
+                Location: {item.long}, {item.lat}
+              </h3>
+              <h3>Date: {item.date}</h3>
+              <h3>
+                Reported Emergency:{" "}
+                {item.intensity * Math.floor(Math.random() * 100) + 90}
+              </h3>
+              <h3>Suggested Staff: {item.intensity * 10}</h3>
+            </Popup>
           </Marker>
         ))}
       </MapContainer>

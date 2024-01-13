@@ -28,8 +28,6 @@ const DisastersList: React.FC = () => {
     }
   };
 
-  console.log(disasters);
-
   useEffect(() => {
     getMapData();
   }, []);
@@ -48,8 +46,10 @@ const DisastersList: React.FC = () => {
         </Table.Head>
         <Table.Body>
           {disasters.map((disaster) => (
-            <Table.Row>
-              <Table.Cell>{disaster.name}</Table.Cell>
+            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                {disaster.name}
+              </Table.Cell>
               <Table.Cell>{disaster.long}</Table.Cell>
               <Table.Cell>{disaster.lat}</Table.Cell>
               <Table.Cell>{disaster.date}</Table.Cell>
