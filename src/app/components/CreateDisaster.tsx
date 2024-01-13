@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Datepicker, Label, RangeSlider, Select, TextInput } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import { HiInformationCircle } from "react-icons/hi";
+import Spline from '@splinetool/react-spline';
 
 const CreateDisaster = () => {
   const [intensity, setIntensity] = useState(5)
@@ -58,10 +59,13 @@ const CreateDisaster = () => {
 
   return (
     <main>
-    <div className="hero mt-20 mb-20">
-        <div className="flex-1 mt-20 padding-x padding-y">
+      <br></br>
+      <br></br>
+    <div className="hero mt-20">
 
-          <h1 className="hero__title">Add a disaster</h1>
+        <div className="flex-1 padding-x padding-y max-w-2xl">
+
+          <h1 className="hero__title">Report a disaster</h1>
 
           <div>
           <Card className='max-w-xl'>
@@ -146,6 +150,9 @@ const CreateDisaster = () => {
         </Card>
           </div>
           
+          </div>
+          <div className='max-w-2xl'>
+          <Spline scene="https://prod.spline.design/p63S-gjwZ7dgK-Qv/scene.splinecode" />
           </div>
           </div>
   
