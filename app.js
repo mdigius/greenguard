@@ -87,6 +87,16 @@ app
   })
   .get(async (req, res) => {
     const name = req.query.name;
+    const type = req.params.type;
+    const date = req.params.date;
+    const intensity = req.params.intensity;
+
+    // Variable to store the query conditionally, if empty it will return all documents
+    const query = {};
+    if (name) query.name = name;
+    if (type) query.type = type;
+    if (date) query.date = date;
+    if (intensity) query.intensity = intensity;
     const type = req.query.type;
     const startDateString = req.query.startDate;
     const endDateString = req.query.endDate;
@@ -143,9 +153,9 @@ app
         .toArray();
 
     if (!disasterResults || disasterResults.length === 0) {
+      console.log("result: " + disasterResults)
         return res.status(404).json({ message: "No disasters found with the specified criteria" });
     }
-
     return res.json(disasterResults);
 });
 
