@@ -12,11 +12,7 @@ const CreateDisaster = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState('success')
-
-  const validateRange = (value: number, min: number, max: number) => {
-   
-    return !isNaN(value) && value >= min && value <= max;
-  };
+  const [disabled, setDisabled] = useState(false)
 
     async function handleSubmit(event: React.FormEvent) {
       event.preventDefault()
@@ -122,14 +118,7 @@ const CreateDisaster = () => {
               placeholder="Range: -180 to 180"
               shadow
               onChange={(e) => {
-                if (validateRange(parseFloat(e.target.value), -90, 90)) {
-                  setLong(parseFloat(e.target.value)) 
-                  setShowAlert(false) 
-                } else {
-                  setAlertMessage('Invalid coordinates!')
-                  setAlertType('failure')
-                  setShowAlert(true)
-                }
+                  setLong(parseFloat(e.target.value))  
               }}
             />
           </div>
@@ -140,21 +129,12 @@ const CreateDisaster = () => {
               placeholder="Range: -90 to 90"
               shadow
               onChange={(e) => {
-                if (validateRange(parseFloat(e.target.value), -90, 90)) {
                   setLat(parseFloat(e.target.value))
-                  setShowAlert(false) 
-                } else {
-                  setAlertMessage('Invalid coordinates!')
-                  setAlertType('failure')
-                  setShowAlert(true)
-                }
-                
-                
               }}
             />
           </div>
           <div>
-          <Button className = 'mb-5'gradientDuoTone="greenToBlue" type="submit">Report Disaster</Button>
+          <Button disabled={disabled}className = 'mb-5'gradientDuoTone="greenToBlue" type="submit">Report Disaster</Button>
 
           {showAlert && (
               <Alert color={alertType} icon={HiInformationCircle}>
