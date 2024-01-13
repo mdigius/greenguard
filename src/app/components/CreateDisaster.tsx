@@ -13,7 +13,7 @@ const CreateDisaster = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState('success')
-  const [disabled, setDisabled] = useState(false)
+ 
     function checkValues(){
       var bool = true
       if(long>180 || long < -180 || lat>90 || lat<-90){
@@ -150,7 +150,7 @@ const CreateDisaster = () => {
             />
           </div>
           <div>
-          <Button disabled={disabled}className = 'mb-5'gradientDuoTone="greenToBlue" type="submit">Report Disaster</Button>
+          <Button className = 'mb-5'gradientDuoTone="greenToBlue" type="submit">Report Disaster</Button>
 
           {showAlert && (
               <Alert color={alertType} icon={HiInformationCircle}>
