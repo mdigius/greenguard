@@ -1,5 +1,6 @@
 "use client"
-import { Label, TextInput, Button, Alert } from 'flowbite-react'
+
+import { Button, Card, Label, TextInput } from 'flowbite-react'
 import React, { useState } from 'react'
 
 const SearchComponent = () => {
@@ -38,6 +39,7 @@ const SearchComponent = () => {
     }
   return (
     <main>
+        
     <div>
         <form className="" onSubmit={handleSubmit}>
                     <div>
