@@ -39,7 +39,6 @@ const SearchComponent = () => {
     }
   return (
     <main>
-        
     <div>
         <form className="" onSubmit={handleSubmit}>
                     <div>
