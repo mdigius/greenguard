@@ -1,4 +1,4 @@
-Name,long,lat,date,intensity,type
+name,long,lat,date,intensity,type
 Pannier,20.9791382,44.2327226,1/7/2023,7,tornado
 Zamit,120.946263,30.526435,2/16/2023,2,hurricane
 Bitchip,29.268579,49.4863064,11/16/2022,9,hurricane
