@@ -1,11 +1,7 @@
 "use client";
 
-
-import React, { useEffect, useState } from "react";
-import { Datepicker, Table } from "flowbite-react";
-
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { Table } from "flowbite-react";
+import { Datepicker, Table } from "flowbite-react";
 
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
@@ -38,8 +34,8 @@ const DisastersList: React.FC = () => {
   const [latMin, setLatMin] = useState("");
   const [latMax, setLatMax] = useState("");
 
-  const [dateMin, setDateMin] = useState(new Date);
-  const [dateMax, setDateMax] = useState(new Date);
+  const [dateMin, setDateMin] = useState(new Date());
+  const [dateMax, setDateMax] = useState(new Date());
 
   const [items, setItems] = useState<any[]>([]);
 
@@ -50,9 +46,9 @@ const DisastersList: React.FC = () => {
   const handleChange = (event: Event, newValue: number | number[]) => {
     setIntensityValue(newValue as number[]);
   };
-  async function handleFilterSubmit(event: React.FormEvent){
+  async function handleFilterSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const url = 'http://localhost:5002/api/disasters';
+    const url = "http://localhost:5002/api/disasters";
 
     // Convert date objects to string representations
     const isoStartDate = dateMin.toISOString();
@@ -68,8 +64,8 @@ const DisastersList: React.FC = () => {
       startDate: isoStartDate,
       endDate: isoEndDate,
       minIntensity: stringMinIntensity,
-      maxIntensity: stringMaxIntensity
-    }
+      maxIntensity: stringMaxIntensity,
+    };
 
     console.log(data);
 
@@ -93,13 +89,23 @@ const DisastersList: React.FC = () => {
       })
       .then((responseData) => {
         console.log("GET successful:", responseData);
-        setDisasters(responseData)
+        setDisasters(responseData);
+        setItems(
+          responseData.map((disaster) => ({
+            position: [disaster.long, disaster.lat],
+            name: disaster.name,
+            date: disaster.date,
+            intensity: disaster.intensity,
+            type: disaster.type,
+            long: disaster.long,
+            lat: disaster.lat,
+          }))
+        );
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-}
-
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -162,15 +168,17 @@ const DisastersList: React.FC = () => {
     }
   };
 
-
-  const searchData =async () => {
+  const searchData = async () => {
     try {
-      const response = await fetch(`http://localhost:5002/api/disasters?name=${name}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:5002/api/disasters?name=${name}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -192,7 +200,7 @@ const DisastersList: React.FC = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   useEffect(() => {
     getMapData();
   }, []);
@@ -212,7 +220,10 @@ const DisastersList: React.FC = () => {
 
   return (
     <>
-      <br /><br /><br /><br />
+      <br />
+      <br />
+      <br />
+      <br />
       <div>
         <form onSubmit={handleSubmit}>
           <div id="searchBlock">
@@ -234,14 +245,18 @@ const DisastersList: React.FC = () => {
                 className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
-            <Button gradientMonochrome="success" type="submit" onClick={searchData}>
+            <Button
+              gradientMonochrome="success"
+              type="submit"
+              onClick={searchData}
+            >
               Search
             </Button>
           </div>
 
           <hr />
-          </form>
-          <form onSubmit={handleFilterSubmit}>
+        </form>
+        <form onSubmit={handleFilterSubmit}>
           <div id="filterPart">
             <div id="typeIntensity">
               <div>
@@ -377,29 +392,29 @@ const DisastersList: React.FC = () => {
 
             <div id="date">
               <div>
-              <div className="mb-2 block">
-            <Label value="Min Date:" />
-            <Datepicker language="eng"
-              required
-              onSelectedDateChanged={(e) => {
-                setDateMin(e) 
-              }
-            }
-            />
-          </div>
+                <div className="mb-2 block">
+                  <Label value="Min Date:" />
+                  <Datepicker
+                    language="eng"
+                    required
+                    onSelectedDateChanged={(e) => {
+                      setDateMin(e);
+                    }}
+                  />
+                </div>
               </div>
 
               <div>
-              <div className="mb-2 block">
-            <Label value="Max Date:" />
-            <Datepicker language="eng"
-              required
-              onSelectedDateChanged={(e) => {
-                setDateMax(e) 
-              }
-            }
-            />
-          </div>
+                <div className="mb-2 block">
+                  <Label value="Max Date:" />
+                  <Datepicker
+                    language="eng"
+                    required
+                    onSelectedDateChanged={(e) => {
+                      setDateMax(e);
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
@@ -415,11 +430,9 @@ const DisastersList: React.FC = () => {
       <div>
         <MapContainer
           center={[56.1304, 106.3468]}
-
-
           zoom={3}
           scrollWheelZoom={false}
-          style={{ height: "400px", width: "100%" }}
+          style={{ height: "400px", width: "100%", zIndex: 1 }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

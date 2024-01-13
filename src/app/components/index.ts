@@ -1,5 +1,5 @@
 import Navbar from "./Navbar";
-import SearchPage from "./SearchPage";
+import DisasterList from "./List";
 import CreateDisaster from "./CreateDisaster";
 
-export { Navbar, SearchPage, CreateDisaster };
+export { Navbar, DisasterList, CreateDisaster };

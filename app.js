@@ -64,7 +64,7 @@ app
     const date = req.body.date;
     const intensity = req.body.intensity;
     const type = req.body.type;
-    console.log(type)
+    console.log(type);
     // Returns an error if any required variables were not included in the request body
     if (!name || !long || !lat || !date || !intensity || !type) {
       return res.status(400).json({ error: "Improper parameters in req body" });
@@ -87,79 +87,80 @@ app
   })
   .get(async (req, res) => {
     const name = req.query.name;
-    const type = req.params.type;
-    const date = req.params.date;
-    const intensity = req.params.intensity;
-
-    // Variable to store the query conditionally, if empty it will return all documents
-    const query = {};
-    if (name) query.name = name;
-    if (type) query.type = type;
-    if (date) query.date = date;
-    if (intensity) query.intensity = intensity;
     const type = req.query.type;
     const startDateString = req.query.startDate;
     const endDateString = req.query.endDate;
     const minIntensityString = req.query.minIntensity;
     const maxIntensityString = req.query.maxIntensity;
 
-    console.log(name, type, startDateString);
+    const query = {};
 
-    // Variable to store the query
-    let query = {};
-
-    if (name !== undefined && name !== '') {
-        // Use a case-insensitive regex for partial matching
-        query.name = { $regex: new RegExp(name, 'i') };
+    if (name !== undefined && name !== "") {
+      // Use a case-insensitive regex for partial matching
+      query.name = { $regex: new RegExp(name, "i") };
     }
 
-    if (type !== undefined && type !== '' && type.toLowerCase() !== 'any') {
-        query.type = type;
+    if (type !== undefined && type !== "" && type.toLowerCase() !== "any") {
+      query.type = type;
     }
 
-    if (startDateString !== undefined && endDateString !== '') {
-        const startDate = new Date(startDateString);
-        const endDate = new Date(endDateString);
-        query.date = { $gte: startDate.toISOString(), $lte: endDate.toISOString() };
+    if (startDateString !== undefined && endDateString !== "") {
+      const startDate = new Date(startDateString);
+      const endDate = new Date(endDateString);
+      query.date = {
+        $gte: startDate.toISOString(),
+        $lte: endDate.toISOString(),
+      };
     }
 
-    if (minIntensityString !== undefined && maxIntensityString !== '') {
-        const minIntensity = parseFloat(minIntensityString);
-        const maxIntensity = parseFloat(maxIntensityString);
-        query.intensity = { $gte: minIntensity, $lte: maxIntensity };
+    if (minIntensityString !== undefined && maxIntensityString !== "") {
+      const minIntensity = parseFloat(minIntensityString);
+      const maxIntensity = parseFloat(maxIntensityString);
+      query.intensity = { $gte: minIntensity, $lte: maxIntensity };
     }
-    console.log(query);
 
     // If no query parameters were provided, return all documents
     if (Object.keys(query).length === 0) {
-        const allDisasters = await client
-            .db("Disasters")
-            .collection("DisasterCollection")
-            .find()
-            .toArray();
+      const allDisasters = await client
+        .db("Disasters")
+        .collection("DisasterCollection")
+        .find()
+        .toArray();
 
-        if (!allDisasters || allDisasters.length === 0) {
-            return res.status(404).json({ message: "No disasters found" });
-        }
+      if (!allDisasters || allDisasters.length === 0) {
+        return res.status(404).json({ message: "No disasters found" });
+      }
 
-        return res.json(allDisasters);
+      return res.json(allDisasters);
     }
 
     // Search for documents in the collection based on the given query
-    const disasterResults = await client
-        .db("Disasters")
-        .collection("DisasterCollection")
-        .find(query)
-        .toArray();
+    let disasterResults = await client
+      .db("Disasters")
+      .collection("DisasterCollection")
+      .find(query)
+      .toArray();
+
+    const result = disasterResults.filter((disaster) => {
+      if (
+        disaster.type === type &&
+        disaster.intensity >= minIntensity &&
+        disaster.intensity <= maxIntensity
+      ) {
+        result.push(disaster);
+      }
+    });
+
+    disasterResults = result;
+
+    console.log("result: " + result);
 
     if (!disasterResults || disasterResults.length === 0) {
-      console.log("result: " + disasterResults)
-        return res.status(404).json({ message: "No disasters found with the specified criteria" });
+      return res
+        .status(404)
+        .json({ message: "No disasters found with the specified criteria" });
     }
     return res.json(disasterResults);
-});
-
-
-
+  });
 
 app.listen(5002, () => console.log("Listening on port 5002"));
