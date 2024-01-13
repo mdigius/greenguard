@@ -1,7 +1,12 @@
 "use client";
 
+
+import React, { useEffect, useState } from "react";
+import { Datepicker, Table } from "flowbite-react";
+
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Table } from "flowbite-react";
+
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import { Button, Card, Label, TextInput } from "flowbite-react";
@@ -26,15 +31,15 @@ const defaultIcon = new L.Icon({
 const DisastersList: React.FC = () => {
   const [disasters, setDisasters] = useState([]);
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("any");
 
   const [lonMin, setLonMin] = useState("");
   const [lonMax, setLonMax] = useState("");
   const [latMin, setLatMin] = useState("");
   const [latMax, setLatMax] = useState("");
 
-  const [dateMin, setDateMin] = useState("");
-  const [dateMax, setDateMax] = useState("");
+  const [dateMin, setDateMin] = useState(new Date);
+  const [dateMax, setDateMax] = useState(new Date);
 
   const [items, setItems] = useState<any[]>([]);
 
@@ -45,6 +50,56 @@ const DisastersList: React.FC = () => {
   const handleChange = (event: Event, newValue: number | number[]) => {
     setIntensityValue(newValue as number[]);
   };
+  async function handleFilterSubmit(event: React.FormEvent){
+    event.preventDefault();
+    const url = 'http://localhost:5002/api/disasters';
+
+    // Convert date objects to string representations
+    const isoStartDate = dateMin.toISOString();
+    const isoEndDate = dateMax.toISOString();
+
+    // Convert number values to strings
+    const stringMinIntensity = String(intensityValue[0]);
+    const stringMaxIntensity = String(intensityValue[1]);
+
+    const data = {
+      name: name,
+      type: type,
+      startDate: isoStartDate,
+      endDate: isoEndDate,
+      minIntensity: stringMinIntensity,
+      maxIntensity: stringMaxIntensity
+    }
+
+    console.log(data);
+
+    // Convert data object to URLSearchParams
+    const params = new URLSearchParams(data);
+
+    // Combine URL and parameters
+    const urlWithParams = `${url}?${params.toString()}`;
+
+    fetch(urlWithParams, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        console.log("GET successful:", responseData);
+        setDisasters(responseData)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+}
+
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -154,6 +209,8 @@ const DisastersList: React.FC = () => {
           </div>
 
           <hr />
+          </form>
+          <form onSubmit={handleFilterSubmit}>
           <div id="filterPart">
             <div id="typeIntensity">
               <div>
@@ -172,10 +229,11 @@ const DisastersList: React.FC = () => {
                   name="type"
                   className="mt-2 block rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 >
-                  <option>Huriccan</option>
-                  <option>Earthquick</option>
-                  <option></option>
+                  <option>Any</option>
+                  <option>Earthquake</option>
+                  <option>Flood</option>
                   <option>Tornado</option>
+                  <option>Hurricane</option>
                 </select>
               </div>
 
@@ -200,7 +258,7 @@ const DisastersList: React.FC = () => {
               </div>
             </div>
 
-            <div id="coordinates">
+            {/* <div id="coordinates">
               <div>
                 <label
                   htmlFor="longitudeMin"
@@ -284,49 +342,33 @@ const DisastersList: React.FC = () => {
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div id="date">
               <div>
-                <label
-                  htmlFor="dateMin"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Date(min)
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="dateMin"
-                    name="dateMin"
-                    type="text"
-                    value={dateMin}
-                    onChange={(n) => {
-                      setDateMin(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
+              <div className="mb-2 block">
+            <Label value="Min Date:" />
+            <Datepicker language="eng"
+              required
+              onSelectedDateChanged={(e) => {
+                setDateMin(e) 
+              }
+            }
+            />
+          </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="dateMax"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Date(max)
-                </label>
-                <div className="mt2">
-                  <input
-                    id="dateMax"
-                    name="dateMax"
-                    type="text"
-                    value={dateMax}
-                    onChange={(n) => {
-                      setDateMax(n.target.value);
-                    }}
-                    className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
+              <div className="mb-2 block">
+            <Label value="Max Date:" />
+            <Datepicker language="eng"
+              required
+              onSelectedDateChanged={(e) => {
+                setDateMax(e) 
+              }
+            }
+            />
+          </div>
               </div>
             </div>
 
@@ -342,6 +384,8 @@ const DisastersList: React.FC = () => {
       <div>
         <MapContainer
           center={[56.1304, 106.3468]}
+
+
           zoom={3}
           scrollWheelZoom={false}
           style={{ height: "400px", width: "100%" }}
