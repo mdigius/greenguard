@@ -31,7 +31,7 @@ fs.createReadStream("MOCK_DATA.csv")
       .findOne({ name: row.name, date: row.date });
 
     // If it is a new record, adds it to the database
-    if (!existingRecord) {
+    if (!existingRecord && row.name) {
       const disasterData = {
         name: row.name,
         long: row.long,

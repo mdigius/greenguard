@@ -59,7 +59,6 @@ const CreateDisaster = () => {
   return (
     <main>
     <div className="hero mt-20 mb-20">
-       
         <div className="flex-1 mt-20 padding-x padding-y">
 
           <h1 className="hero__title">Add a disaster</h1>

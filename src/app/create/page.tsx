@@ -9,7 +9,7 @@ import { CreateDisaster, SearchPage } from "../components";
 export default function Home() {
   const router = useRouter();
   return (
-    <main>
+    <main className='overflow-hidden'>
       <CreateDisaster/>
 
     </main>
