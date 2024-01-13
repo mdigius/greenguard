@@ -14,7 +14,13 @@ const CreateDisaster = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState('success')
   const [disabled, setDisabled] = useState(false)
-
+    function checkValues(){
+      var bool = true
+      if(long>180 || long < -180 || lat>90 || lat<-90){
+        bool = false
+      }
+      return bool
+    }
     async function handleSubmit(event: React.FormEvent) {
       event.preventDefault()
       const url = `http://localhost:5002/api/disasters`
@@ -28,7 +34,7 @@ const CreateDisaster = () => {
         date: date
       }
       console.log(data)
-
+      if(checkValues()){
       fetch(url, {
         method: "POST",
         headers: {
@@ -38,7 +44,11 @@ const CreateDisaster = () => {
       })
         .then((response) => {
           if (!response.ok) {
+            setAlertMessage('Invalid coordinate input!')
+            setAlertType('failure')
+            setShowAlert(true)
             throw new Error(`HTTP error! Status: ${response.status}`);
+            
           }
           return response.json();
         })
@@ -52,7 +62,12 @@ const CreateDisaster = () => {
         .catch((error) => {
           console.error("Error:", error);
         });
+      } else {
+        setAlertMessage('Invalid coordinate input!')
+        setAlertType('failure')
+        setShowAlert(true)
 
+      }
 
 
     }
@@ -86,9 +101,7 @@ const CreateDisaster = () => {
       <div className="mb-2 block">
         <Label htmlFor="countries" value="Type:" />
         <Select id="countries" required onChange={(e) => {
-          
           setType(e.target.value)
-
         }}>
         <option>Earthquake</option>
         <option>Flood</option>
