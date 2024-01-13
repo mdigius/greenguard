@@ -64,7 +64,7 @@ app
     const date = req.body.date;
     const intensity = req.body.intensity;
     const type = req.body.type;
-
+    console.log(type)
     // Returns an error if any required variables were not included in the request body
     if (!name || !long || !lat || !date || !intensity || !type) {
       return res.status(400).json({ error: "Improper parameters in req body" });
