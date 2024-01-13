@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
 
       <style jsx>{`
         .text {
-          color: skyblue;
+          color: #22C55E;
         }
       `}</style>
     </nav>
