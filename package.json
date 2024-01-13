@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"npm run api\" \"next dev\" ",
+    "api": "nodemon app.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
