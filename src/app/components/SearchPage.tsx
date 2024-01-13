@@ -13,7 +13,6 @@ const SearchPage = () => {
           <Map></Map>
           </div>
           </div>
-  
     </main>
   )
 }
