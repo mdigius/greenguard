@@ -76,4 +76,28 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  background-color: #F0FDF4;
+}
+
+label{
+  color: black;
+}
+
+button{
+  margin-left: 30px;
+}
+
+hr{
+  margin-top: 20px;
+  width: 1312px;
+  height: 1px;
+}
+#searchBlock, #coordinates, #typeIntensity, #date, #searchBtn{
+  display: flex;
+  flex-direction: row;
+  align-items: center;   
+  justify-content: center;
+  gap: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
