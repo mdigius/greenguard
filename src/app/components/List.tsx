@@ -1,11 +1,16 @@
 "use client";
 
+
 import React, { useEffect, useState } from "react";
 import { Datepicker, Table } from "flowbite-react";
+
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { Table } from "flowbite-react";
+
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import { Button, Card, Label, TextInput } from "flowbite-react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -39,6 +44,8 @@ const DisastersList: React.FC = () => {
   const [items, setItems] = useState<any[]>([]);
 
   const [intensityValue, setIntensityValue] = React.useState<number[]>([0, 10]);
+
+  const mapRef = useRef<any>(null);
 
   const handleChange = (event: Event, newValue: number | number[]) => {
     setIntensityValue(newValue as number[]);
@@ -141,7 +148,7 @@ const DisastersList: React.FC = () => {
       setDisasters(data);
       setItems(
         data.map((disaster) => ({
-          position: [disaster.lat, disaster.long],
+          position: [disaster.long, disaster.lat],
           name: disaster.name,
           date: disaster.date,
           intensity: disaster.intensity,
@@ -158,6 +165,19 @@ const DisastersList: React.FC = () => {
   useEffect(() => {
     getMapData();
   }, []);
+
+  const focusMap = (long: number, lat: number) => {
+    const map = mapRef.current;
+    if (map) {
+      map.setView([long, lat], 13);
+    }
+  };
+
+  const MapInitializer = () => {
+    const map = useMap();
+    mapRef.current = map;
+    return null;
+  };
 
   return (
     <>
@@ -364,13 +384,17 @@ const DisastersList: React.FC = () => {
       <div>
         <MapContainer
           center={[56.1304, 106.3468]}
-          zoom={1}
-          style={{ height: "400px", width: "100%", zIndex: 1}}
+
+
+          zoom={3}
+          scrollWheelZoom={false}
+          style={{ height: "400px", width: "100%" }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+          <MapInitializer />
           {items.map((item) => (
             <Marker position={item.position} icon={defaultIcon}>
               <Popup>
@@ -416,12 +440,13 @@ const DisastersList: React.FC = () => {
                 <Table.Cell>{disaster.intensity}</Table.Cell>
                 <Table.Cell>{disaster.type}</Table.Cell>
                 <Table.Cell>
-                  <a
-                    href="#"
-                    className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                  <button
+                    onClick={() => {
+                      focusMap(disaster.long, disaster.lat);
+                    }}
                   >
                     Focus
-                  </a>
+                  </button>
                 </Table.Cell>
               </Table.Row>
             ))}
