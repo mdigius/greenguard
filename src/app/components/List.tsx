@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
-import { Datepicker, Table } from "flowbite-react";
+import { Datepicker, RangeSlider, Table } from "flowbite-react";
 
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
@@ -39,13 +39,25 @@ const DisastersList: React.FC = () => {
 
   const [items, setItems] = useState<any[]>([]);
 
-  const [intensityValue, setIntensityValue] = React.useState<number[]>([0, 10]);
+  const [intensityValue, setIntensityValue] = useState(5);
 
   const mapRef = useRef<any>(null);
+  const sortData = (key: any) => {
+    setDisasters((prevDisasters) => {
+      const sortedData = [...prevDisasters].sort((a, b) => {
+        if (a[key] < b[key]) {
+          return -1;
+        }
+        if (a[key] > b[key]) {
+          return 1;
+        }
+        return 0;
+      });
 
-  const handleChange = (event: Event, newValue: number | number[]) => {
-    setIntensityValue(newValue as number[]);
+      return sortedData;
+    });
   };
+  
   async function handleFilterSubmit(event: React.FormEvent) {
     event.preventDefault();
     const url = "http://localhost:5002/api/disasters";
@@ -55,16 +67,16 @@ const DisastersList: React.FC = () => {
     const isoEndDate = dateMax.toISOString();
 
     // Convert number values to strings
-    const stringMinIntensity = String(intensityValue[0]);
-    const stringMaxIntensity = String(intensityValue[1]);
+    
+    const stringMaxIntensity = String(intensityValue);
 
     const data = {
       name: name,
-      type: type,
-      startDate: isoStartDate,
-      endDate: isoEndDate,
-      minIntensity: stringMinIntensity,
-      maxIntensity: stringMaxIntensity,
+      type: type.toLowerCase(),
+      // startDate: isoStartDate,
+      // endDate: isoEndDate,
+      // minIntensity: stringMinIntensity,
+      maxIntensity: stringMaxIntensity
     };
 
     console.log(data);
@@ -83,6 +95,7 @@ const DisastersList: React.FC = () => {
     })
       .then((response) => {
         if (!response.ok) {
+          setDisasters([])
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
@@ -110,25 +123,45 @@ const DisastersList: React.FC = () => {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     // URL to connect to api
-    const url = `localhost:5002`;
+    const url = `http://localhost:5002/api/disasters`;
     // Creates json body object to be passed in post request
-    const data = {};
+    const data = {
+      name: name
+    };
 
-    fetch(url, {
-      method: "POST",
+    const params = new URLSearchParams(data);
+
+    // Combine URL and parameters
+    const urlWithParams = `${url}?${params.toString()}`;
+
+    fetch(urlWithParams, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     })
       .then((response) => {
         if (!response.ok) {
+          setDisasters([])
+          
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
       })
       .then((responseData) => {
-        console.log("POST successful:", responseData);
+        console.log("GET successful:", responseData);
+        setDisasters(responseData);
+        setItems(
+          responseData.map((disaster) => ({
+            position: [disaster.lat, disaster.long],
+            name: disaster.name,
+            date: disaster.date,
+            intensity: disaster.intensity,
+            type: disaster.type,
+            long: disaster.long,
+            lat: disaster.lat,
+          }))
+        );
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -284,23 +317,12 @@ const DisastersList: React.FC = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="type"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Intensity
-                </label>
-
-                <Box sx={{ width: 300 }}>
-                  <Slider
-                    value={intensityValue}
-                    onChange={handleChange}
-                    valueLabelDisplay="auto"
-                    getAriaLabel={() => "Intensity range"}
-                    min={0}
-                    max={10}
-                  />
-                </Box>
+              <div className="mb-2 block">
+          <Label value={` Max Intensity: ${intensityValue}`} />
+            <RangeSlider id="lg-range" sizing="lg" min={1} max={10} value={intensityValue} onChange={(e) => {
+                setIntensityValue(parseInt(e.target.value));
+              }}/>
+          </div>
               </div>
             </div>
 
@@ -377,14 +399,14 @@ const DisastersList: React.FC = () => {
       <br />
       <div className="overflow-x-auto">
         <Table>
-          <Table.Head>
-            <Table.HeadCell>Disaster Name</Table.HeadCell>
-            <Table.HeadCell>longitude</Table.HeadCell>
-            <Table.HeadCell>latitude</Table.HeadCell>
-            <Table.HeadCell>Date</Table.HeadCell>
-            <Table.HeadCell>Intensity</Table.HeadCell>
-            <Table.HeadCell>Type</Table.HeadCell>
-            <Table.HeadCell> Click To Focus</Table.HeadCell>
+        <Table.Head>
+          <Table.HeadCell onClick={() => sortData('name')}>Disaster Name</Table.HeadCell>
+          <Table.HeadCell onClick={() => sortData('longitude')}>Longitude</Table.HeadCell>
+          <Table.HeadCell onClick={() => sortData('latitude')}>Latitude</Table.HeadCell>
+          <Table.HeadCell onClick={() => sortData('date')}>Date</Table.HeadCell>
+          <Table.HeadCell onClick={() => sortData('intensity')}>Intensity</Table.HeadCell>
+          <Table.HeadCell onClick={() => sortData('type')}>Type</Table.HeadCell>
+          <Table.HeadCell>Click To Focus</Table.HeadCell>
           </Table.Head>
           <Table.Body>
             {disasters.map((disaster) => (

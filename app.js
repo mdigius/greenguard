@@ -97,27 +97,28 @@ app
 
     if (name !== undefined && name !== "") {
       // Use a case-insensitive regex for partial matching
-      query.name = { $regex: new RegExp(name, "i") };
+      query.name = name;
     }
 
-    if (type !== undefined && type !== "" && type.toLowerCase() !== "any") {
-      query.type = type;
+    if (type !== undefined && type !== "" && type.toLowerCase() !== "any" && type.toLowerCase() !== "Any") {
+      query.type = type.toLowerCase();
     }
 
-    if (startDateString !== undefined && endDateString !== "") {
-      const startDate = new Date(startDateString);
-      const endDate = new Date(endDateString);
-      query.date = {
-        $gte: startDate.toISOString(),
-        $lte: endDate.toISOString(),
-      };
-    }
+    // if (startDateString !== undefined && endDateString !== "") {
+    //   const startDate = new Date(startDateString);
+    //   const endDate = new Date(endDateString);
+    //   query.date = {
+    //     $gte: startDate.toISOString(),
+    //     $lte: endDate.toISOString(),
+    //   };
+    // }
 
-    if (minIntensityString !== undefined && maxIntensityString !== "") {
-      const minIntensity = parseFloat(minIntensityString);
-      const maxIntensity = parseFloat(maxIntensityString);
-      query.intensity = { $gte: minIntensity, $lte: maxIntensity };
-    }
+    // if (maxIntensityString !== "") {
+    //   const maxIntensity = parseInt(maxIntensityString);
+    //   query.intensity = {$lte: maxIntensity };
+    // }
+    console.log(query)
+    console.log(Object.keys(query).length)
 
     // If no query parameters were provided, return all documents
     if (Object.keys(query).length === 0) {
@@ -135,14 +136,14 @@ app
     }
 
     // Search for documents in the collection based on the given query
-    try {
+   
       const disasterResults = await client
         .db("Disasters")
         .collection("DisasterCollection")
         .find(query)
         .toArray();
 
-      console.log("result: " + result);
+      console.log("result: " + disasterResults);
 
       if (!disasterResults || disasterResults.length === 0) {
         return res
@@ -150,11 +151,7 @@ app
           .json({ message: "No disasters found with the specified criteria" });
       }
       return res.json(disasterResults);
-    } catch (e) {
-      return res
-        .status(500)
-        .json({ message: "An error occurred", error: error });
-    }
-  });
+    } 
+  );
 
 app.listen(5002, () => console.log("Listening on port 5002"));
