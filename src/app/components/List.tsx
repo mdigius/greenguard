@@ -37,7 +37,7 @@ const DisastersList: React.FC = () => {
   const [dateMin, setDateMin] = useState(new Date());
   const [dateMax, setDateMax] = useState(new Date());
 
-  const [items, setItems] = useState<any[]>([]);
+  const [marker, setMarker] = useState<any[]>([]);
 
   const [intensityValue, setIntensityValue] = React.useState<number[]>([0, 10]);
 
@@ -90,7 +90,7 @@ const DisastersList: React.FC = () => {
       .then((responseData) => {
         console.log("GET successful:", responseData);
         setDisasters(responseData);
-        setItems(
+        setMarker(
           responseData.map((disaster) => ({
             position: [disaster.lat, disaster.long],
             name: disaster.name,
@@ -99,6 +99,14 @@ const DisastersList: React.FC = () => {
             type: disaster.type,
             long: disaster.long,
             lat: disaster.lat,
+            image:
+              disaster.type === "earthquake"
+                ? "earthquake.png"
+                : "flood"
+                ? "flood.png"
+                : "hurricane"
+                ? "hurricane.png"
+                : "tornado.png",
           }))
         );
       })
@@ -152,7 +160,7 @@ const DisastersList: React.FC = () => {
 
       const data = await response.json();
       setDisasters(data);
-      setItems(
+      setMarker(
         data.map((disaster) => ({
           position: [disaster.lat, disaster.long],
           name: disaster.name,
@@ -161,6 +169,14 @@ const DisastersList: React.FC = () => {
           type: disaster.type,
           long: disaster.long,
           lat: disaster.lat,
+          image:
+            disaster.type === "earthquake"
+              ? "earthquake.png"
+              : "flood"
+              ? "flood.png"
+              : "hurricane"
+              ? "hurricane.png"
+              : "tornado.png",
         }))
       );
     } catch (error) {
@@ -186,7 +202,7 @@ const DisastersList: React.FC = () => {
 
       const data = await response.json();
       setDisasters(data);
-      setItems(
+      setMarker(
         data.map((disaster) => ({
           position: [disaster.lat, disaster.long],
           name: disaster.name,
@@ -195,6 +211,14 @@ const DisastersList: React.FC = () => {
           type: disaster.type,
           long: disaster.long,
           lat: disaster.lat,
+          image:
+            disaster.type === "earthquake"
+              ? "earthquake.png"
+              : "flood"
+              ? "flood.png"
+              : "hurricane"
+              ? "hurricane.png"
+              : "tornado.png",
         }))
       );
     } catch (error) {
@@ -353,22 +377,91 @@ const DisastersList: React.FC = () => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           <MapInitializer />
-          {items.map((item) => (
+          {marker.map((item) => (
             <Marker position={item.position} icon={defaultIcon}>
               <Popup>
-                <h3 id="name">
-                  {item.type} - {item.name}
-                </h3>
-                <h3 id="intensity">LV. {item.intensity}</h3>
-                <h3>
-                  Location: {item.lat}, {item.long}
-                </h3>
-                <h3>Date: {item.date}</h3>
-                <h3>
-                  Reported Emergency:{" "}
-                  {item.intensity * Math.floor(Math.random() * 100) + 90}
-                </h3>
-                <h3>Suggested Staff: {item.intensity * 10}</h3>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "366px",
+                    padding: "12px",
+                    alignItems: "center",
+                    gap: "24px",
+                  }}
+                >
+                  <img src={item.image} />
+                  <div>
+                    <h3
+                      style={{
+                        color: "var(--Neutral-500, #737373)",
+                        textAlign: "justify",
+                        fontFamily: "Inter",
+                        fontSize: "14px",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      {item.type} - {item.name}
+                    </h3>
+                    <h3
+                      style={{
+                        color: "var(--Neutral-900, #171717)",
+                        textAlign: "justify",
+                        fontFamily: "Inter",
+                        fontSize: "28px",
+                        fontStyle: "normal",
+                        fontWeight: 700,
+                        lineHeight: "36px",
+                        letterSpacing: "-0.56px",
+                      }}
+                    >
+                      LV. {item.intensity}
+                    </h3>
+                    <h3
+                      style={{
+                        color: "var(--Neutral-500, #737373)",
+                        textAlign: "justify",
+                        fontFamily: "Inter",
+                        fontSize: "14px",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      Location: {item.lat}, {item.long}
+                      <br />
+                      Date: {item.date}
+                    </h3>
+                    <h3
+                      style={{
+                        color: "var(--Warning-600, #D97706)",
+                        textAlign: "justify",
+                        fontFamily: "Inter",
+                        fontSize: "14px",
+                        fontStyle: "normal",
+                        fontWeight: 600,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      Reported Emergency:{" "}
+                      {item.intensity * Math.floor(Math.random() * 100) + 90}
+                    </h3>
+                    <h3
+                      style={{
+                        color: "var(--success-500-main, #22C55E)",
+                        textAlign: "justify",
+                        fontFamily: "Inter",
+                        fontSize: "14px",
+                        fontStyle: "normal",
+                        fontWeight: 600,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      Suggested Staff: {item.intensity * 10}
+                    </h3>
+                  </div>
+                </div>
               </Popup>
             </Marker>
           ))}

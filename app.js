@@ -142,8 +142,6 @@ app
         .find(query)
         .toArray();
 
-      console.log("result: " + result);
-
       if (!disasterResults || disasterResults.length === 0) {
         return res
           .status(404)
@@ -151,9 +149,7 @@ app
       }
       return res.json(disasterResults);
     } catch (e) {
-      return res
-        .status(500)
-        .json({ message: "An error occurred", error: error });
+      return res.status(500).json({ message: "An error occurred", error: e });
     }
   });
 
