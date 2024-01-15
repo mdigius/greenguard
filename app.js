@@ -151,7 +151,11 @@ app
           .json({ message: "No disasters found with the specified criteria" });
       }
       return res.json(disasterResults);
-    } 
-  );
+
+    } catch (e) {
+      return res.status(500).json({ message: "An error occurred", error: e });
+    }
+  });
+
 
 app.listen(5002, () => console.log("Listening on port 5002"));
