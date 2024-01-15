@@ -100,7 +100,12 @@ app
       query.name = name;
     }
 
-    if (type !== undefined && type !== "" && type.toLowerCase() !== "any" && type.toLowerCase() !== "Any") {
+    if (
+      type !== undefined &&
+      type !== "" &&
+      type.toLowerCase() !== "any" &&
+      type.toLowerCase() !== "Any"
+    ) {
       query.type = type.toLowerCase();
     }
 
@@ -117,8 +122,8 @@ app
     //   const maxIntensity = parseInt(maxIntensityString);
     //   query.intensity = {$lte: maxIntensity };
     // }
-    console.log(query)
-    console.log(Object.keys(query).length)
+    console.log(query);
+    console.log(Object.keys(query).length);
 
     // If no query parameters were provided, return all documents
     if (Object.keys(query).length === 0) {
@@ -136,26 +141,21 @@ app
     }
 
     // Search for documents in the collection based on the given query
-   
-      const disasterResults = await client
-        .db("Disasters")
-        .collection("DisasterCollection")
-        .find(query)
-        .toArray();
 
-      console.log("result: " + disasterResults);
+    const disasterResults = await client
+      .db("Disasters")
+      .collection("DisasterCollection")
+      .find(query)
+      .toArray();
 
-      if (!disasterResults || disasterResults.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No disasters found with the specified criteria" });
-      }
-      return res.json(disasterResults);
+    console.log("result: " + disasterResults);
 
-    } catch (e) {
-      return res.status(500).json({ message: "An error occurred", error: e });
+    if (!disasterResults || disasterResults.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No disasters found with the specified criteria" });
     }
+    return res.json(disasterResults);
   });
-
 
 app.listen(5002, () => console.log("Listening on port 5002"));
